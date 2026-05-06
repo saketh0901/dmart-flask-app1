@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Products – DMart{% endblock %}
+{% block content %}
+<div class="container">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:28px;">
+    <h1 style="font-family:'Playfair Display',serif;font-size:2rem;color:var(--green);">All Products</h1>
+    <form method="get" style="display:flex;gap:10px;flex-wrap:wrap;">
+      <input class="form-control" name="q" value="{{ search }}" placeholder="Search…" style="width:200px;"/>
+      <select class="form-control" name="category" style="width:170px;">
+        <option value="">All Categories</option>
+        {% for c in categories %}
+        <option value="{{ c.id }}" {% if cat_id|string == c.id|string %}selected{% endif %}>{{ c.name }}</option>
+        {% endfor %}
+      </select>
+      <button class="btn btn-green" type="submit">Filter</button>
+      <a class="btn btn-outline" href="{{ url_for('products') }}">Clear</a>
+    </form>
+  </div>
+
+  {% if products %}
+  <div class="product-grid">
+    {% for p in products %}
+    <div class="product-card">
+      <a href="{{ url_for('product_detail', pid=p.id) }}">
+        <img src="{{ p.image_url or 'https://via.placeholder.com/400x300' }}" alt="{{ p.name }}"/>
+      </a>
+      <div class="product-card-body">
+        <div class="category">{{ p.category_name }}</div>
+        <h3><a href="{{ url_for('product_detail', pid=p.id) }}">{{ p.name }}</a></h3>
+        <div class="price">₹ {{ "%.2f"|format(p.price) }}</div>
+        {% if p.stock == 0 %}<div class="stock-low">Out of stock</div>
+        {% elif p.stock < 5 %}<div class="stock-low">Only {{ p.stock }} left!</div>{% endif %}
+        {% if session.get('user_id') and p.stock > 0 %}
+        <form method="POST" action="{{ url_for('add_to_cart', pid=p.id) }}">
+          <input type="hidden" name="quantity" value="1"/>
+          <button type="submit" class="btn btn-green btn-sm" style="width:100%;margin-top:8px;">+ Add to Cart</button>
+        </form>
+        {% elif not session.get('user_id') %}
+        <a href="{{ url_for('login') }}" class="btn btn-outline btn-sm" style="display:block;text-align:center;margin-top:8px;">Login to Buy</a>
+        {% else %}
+        <button class="btn btn-sm" style="width:100%;margin-top:8px;background:#ddd;color:#999;cursor:default;">Out of Stock</button>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="card" style="text-align:center;padding:60px;">
+    <p style="font-size:1.2rem;color:var(--mid);">No products found. <a href="{{ url_for('products') }}">Clear filters</a></p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

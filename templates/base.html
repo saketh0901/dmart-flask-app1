@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}DMart{% endblock %}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --green:   #1a5c2a;
+      --green2:  #2d7a40;
+      --orange:  #e8640a;
+      --orange2: #ff7c1f;
+      --cream:   #fdf8f0;
+      --dark:    #111;
+      --mid:     #555;
+      --light:   #f4f4f4;
+      --red:     #c0392b;
+      --radius:  10px;
+      --shadow:  0 4px 20px rgba(0,0,0,.10);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--dark);
+      min-height: 100vh;
+    }
+    a { text-decoration: none; color: inherit; }
+
+    /* ── NAVBAR ── */
+    .navbar {
+      background: var(--green);
+      padding: 0 28px;
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,.25);
+    }
+    .nav-inner {
+      max-width: 1280px; margin: auto;
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 18px;
+      height: 64px;
+    }
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem; font-weight: 900;
+      color: #fff; letter-spacing: 1px;
+      white-space: nowrap;
+    }
+    .logo span { color: var(--orange2); }
+
+    /* search */
+    .search-form { display: flex; flex: 1; max-width: 420px; }
+    .search-form input {
+      flex: 1; padding: 9px 14px;
+      border: none; border-radius: 6px 0 0 6px;
+      font-size: .95rem; outline: none;
+    }
+    .search-form button {
+      padding: 9px 16px;
+      background: var(--orange2);
+      color: #fff; border: none;
+      border-radius: 0 6px 6px 0;
+      cursor: pointer; font-weight: 600;
+      font-size: .95rem;
+      transition: background .2s;
+    }
+    .search-form button:hover { background: var(--orange); }
+
+    /* nav links */
+    .nav-links { display: flex; align-items: center; gap: 20px; }
+    .nav-links a {
+      color: rgba(255,255,255,.88);
+      font-weight: 500; font-size: .95rem;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: #fff; }
+    .cart-badge {
+      background: var(--orange2);
+      color: #fff; border-radius: 20px;
+      padding: 6px 14px; font-weight: 700;
+      font-size: .9rem; display: flex;
+      align-items: center; gap: 5px;
+    }
+    .nav-btn {
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.3);
+      color: #fff; border-radius: 6px;
+      padding: 7px 14px; font-weight: 500;
+      font-size: .9rem; cursor: pointer;
+      transition: background .2s;
+    }
+    .nav-btn:hover { background: rgba(255,255,255,.25); }
+
+    /* ── CATEGORY BAR ── */
+    .catbar {
+      background: var(--orange);
+      padding: 0 28px;
+    }
+    .catbar-inner {
+      max-width: 1280px; margin: auto;
+      display: flex; align-items: center;
+      gap: 28px; height: 46px;
+      overflow-x: auto;
+    }
+    .catbar-inner::-webkit-scrollbar { display: none; }
+    .catbar a {
+      color: #fff; font-weight: 600;
+      font-size: .9rem; white-space: nowrap;
+      opacity: .9; transition: opacity .2s;
+    }
+    .catbar a:hover { opacity: 1; }
+
+    /* ── FLASH MESSAGES ── */
+    .flashes { max-width: 1280px; margin: 16px auto; padding: 0 28px; }
+    .flash {
+      padding: 12px 18px; border-radius: var(--radius);
+      margin-bottom: 8px; font-weight: 500; font-size: .95rem;
+    }
+    .flash.success { background: #d4edda; color: #155724; border-left: 4px solid #28a745; }
+    .flash.danger  { background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545; }
+    .flash.warning { background: #fff3cd; color: #856404; border-left: 4px solid #ffc107; }
+    .flash.info    { background: #d1ecf1; color: #0c5460; border-left: 4px solid #17a2b8; }
+
+    /* ── MAIN WRAPPER ── */
+    .container { max-width: 1280px; margin: 0 auto; padding: 30px 28px; }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-block; padding: 10px 22px;
+      border-radius: var(--radius); font-weight: 600;
+      font-size: .92rem; cursor: pointer;
+      border: none; transition: all .2s;
+    }
+    .btn-green  { background: var(--green);  color: #fff; }
+    .btn-green:hover  { background: var(--green2); }
+    .btn-orange { background: var(--orange2); color: #fff; }
+    .btn-orange:hover { background: var(--orange); }
+    .btn-red    { background: var(--red);    color: #fff; }
+    .btn-red:hover    { background: #a93226; }
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--green);
+      color: var(--green);
+    }
+    .btn-outline:hover { background: var(--green); color: #fff; }
+    .btn-sm { padding: 6px 14px; font-size: .85rem; }
+
+    /* ── PRODUCT CARD ── */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 22px;
+    }
+    .product-card {
+      background: #fff; border-radius: 12px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: transform .25s, box-shadow .25s;
+      display: flex; flex-direction: column;
+    }
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 32px rgba(0,0,0,.14);
+    }
+    .product-card img {
+      width: 100%; height: 180px; object-fit: cover;
+    }
+    .product-card-body { padding: 14px; flex: 1; display: flex; flex-direction: column; gap: 6px; }
+    .product-card-body h3 { font-size: 1rem; font-weight: 600; }
+    .product-card-body .price { color: var(--green); font-weight: 700; font-size: 1.1rem; }
+    .product-card-body .category { color: var(--mid); font-size: .82rem; }
+    .product-card-body .stock-low { color: var(--red); font-size: .82rem; }
+    .product-card form { margin-top: auto; }
+
+    /* ── TABLES ── */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); }
+    th { background: var(--green); color: #fff; padding: 13px 16px; text-align: left; font-size: .9rem; }
+    td { padding: 12px 16px; border-bottom: 1px solid #eee; font-size: .92rem; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f9f9f9; }
+
+    /* ── BADGE ── */
+    .badge {
+      display: inline-block; padding: 3px 10px;
+      border-radius: 20px; font-size: .78rem; font-weight: 700;
+    }
+    .badge-pending   { background: #fff3cd; color: #856404; }
+    .badge-confirmed { background: #d4edda; color: #155724; }
+    .badge-delivered { background: #cce5ff; color: #004085; }
+    .badge-cancelled { background: #f8d7da; color: #721c24; }
+
+    /* ── CARD ── */
+    .card {
+      background: #fff; border-radius: 12px;
+      box-shadow: var(--shadow); padding: 24px;
+    }
+
+    /* ── FORM ── */
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-weight: 600; margin-bottom: 6px; font-size: .9rem; }
+    .form-control {
+      width: 100%; padding: 10px 14px;
+      border: 1.5px solid #ddd; border-radius: var(--radius);
+      font-size: .95rem; font-family: inherit;
+      transition: border-color .2s;
+    }
+    .form-control:focus { border-color: var(--green); outline: none; }
+    select.form-control { background: #fff; }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 28px;
+      background: var(--green);
+      color: rgba(255,255,255,.7);
+      font-size: .88rem;
+      margin-top: 60px;
+    }
+    footer a { color: var(--orange2); }
+  </style>
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <a class="logo" href="{{ url_for('index') }}">D<span>Mart</span></a>
+
+    <form class="search-form" action="{{ url_for('products') }}" method="get">
+      <input type="text" name="q" placeholder="Search products…" value="{{ request.args.get('q','') }}"/>
+      <button type="submit">🔍</button>
+    </form>
+
+    <div class="nav-links">
+      {% if session.get('user_id') %}
+        <span style="color:rgba(255,255,255,.8);font-size:.9rem;">Hi, {{ session.username }}</span>
+        <a href="{{ url_for('order_history') }}">My Orders</a>
+        {% if session.get('is_admin') %}
+          <a href="{{ url_for('admin_dashboard') }}" class="nav-btn">⚙ Admin</a>
+        {% endif %}
+        <a href="{{ url_for('logout') }}" class="nav-btn">Logout</a>
+      {% else %}
+        <a href="{{ url_for('login') }}" class="nav-btn">Login</a>
+        <a href="{{ url_for('register') }}" class="nav-btn">Register</a>
+      {% endif %}
+      <a href="{{ url_for('cart') }}" class="cart-badge">🛒 {{ cart_count }}</a>
+    </div>
+  </div>
+</nav>
+
+<!-- CATEGORY BAR -->
+<div class="catbar">
+  <div class="catbar-inner">
+    <a href="{{ url_for('products') }}">All</a>
+    <a href="{{ url_for('products', category=1) }}">🍎 Fruits</a>
+    <a href="{{ url_for('products', category=2) }}">🥤 Drinks</a>
+    <a href="{{ url_for('products', category=3) }}">🥛 Curd & Milk</a>
+    <a href="{{ url_for('products', category=4) }}">🍪 Biscuits</a>
+    <a href="{{ url_for('products', category=5) }}">🍫 Chocolate</a>
+    <a href="{{ url_for('products', category=6) }}">🥦 Vegetables</a>
+  </div>
+</div>
+
+<!-- FLASH -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flashes">
+      {% for cat, msg in messages %}
+        <div class="flash {{ cat }}">{{ msg }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+{% block content %}{% endblock %}
+
+<footer>
+  &copy; 2024 <strong>DMart</strong> · Built with Flask + MySQL ·
+  <a href="{{ url_for('admin_dashboard') }}">Admin</a>
+</footer>
+</body>
+</html>

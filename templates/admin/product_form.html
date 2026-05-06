@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if product else 'Add' }} Product – DMart Admin{% endblock %}
+{% block extra_css %}
+<style>
+  .admin-wrap{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 112px);}
+  .sidebar{background:#111;padding:24px 0;}
+  .sidebar h3{color:rgba(255,255,255,.4);font-size:.72rem;letter-spacing:2px;text-transform:uppercase;padding:0 20px 10px;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:10px;}
+  .sidebar a{display:block;padding:11px 20px;color:rgba(255,255,255,.75);font-size:.92rem;font-weight:500;border-left:3px solid transparent;transition:all .2s;}
+  .sidebar a:hover{background:rgba(255,255,255,.07);color:#fff;border-left-color:var(--orange2);}
+  .admin-main{padding:30px;background:var(--cream);}
+</style>
+{% endblock %}
+{% block content %}
+<div class="admin-wrap">
+  <div class="sidebar">
+    <h3>Admin Panel</h3>
+    <a href="{{ url_for('admin_dashboard') }}">📊 Dashboard</a>
+    <a href="{{ url_for('admin_products') }}">📦 Products</a>
+    <a href="{{ url_for('admin_orders') }}">🧾 Orders</a>
+    <a href="{{ url_for('admin_customers') }}">👥 Customers</a>
+    <a href="{{ url_for('index') }}">🏠 View Store</a>
+  </div>
+  <div class="admin-main">
+    <a href="{{ url_for('admin_products') }}" style="color:var(--green);font-weight:600;">← Back to Products</a>
+    <div class="card" style="margin-top:22px;max-width:600px;">
+      <h2 style="font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--green);margin-bottom:24px;">
+        {{ 'Edit Product' if product else 'Add New Product' }}
+      </h2>
+      <form method="POST">
+        <div class="form-group">
+          <label>Product Name</label>
+          <input class="form-control" type="text" name="name" required value="{{ product.name if product else '' }}" placeholder="e.g. Fresh Apples"/>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea class="form-control" name="description" rows="3" placeholder="Short product description">{{ product.description if product else '' }}</textarea>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div class="form-group">
+            <label>Price (₹)</label>
+            <input class="form-control" type="number" name="price" step="0.01" min="0" required value="{{ product.price if product else '' }}"/>
+          </div>
+          <div class="form-group">
+            <label>Stock Qty</label>
+            <input class="form-control" type="number" name="stock" min="0" required value="{{ product.stock if product else '0' }}"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select class="form-control" name="category_id" required>
+            {% for c in categories %}
+            <option value="{{ c.id }}" {% if product and product.category_id == c.id %}selected{% endif %}>{{ c.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Image URL</label>
+          <input class="form-control" type="url" name="image_url" value="{{ product.image_url if product else '' }}" placeholder="https://…"/>
+        </div>
+        <div style="display:flex;gap:12px;margin-top:8px;">
+          <button type="submit" class="btn btn-green">{{ 'Update Product' if product else 'Add Product' }}</button>
+          <a href="{{ url_for('admin_products') }}" class="btn btn-outline">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

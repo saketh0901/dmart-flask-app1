@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}DMart – Fresh Groceries Delivered{% endblock %}
+
+{% block extra_css %}
+<style>
+  .hero {
+    background: linear-gradient(135deg, var(--green) 0%, var(--green2) 60%, var(--orange) 100%);
+    padding: 70px 28px;
+    text-align: center;
+    color: #fff;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    font-weight: 900;
+    margin-bottom: 14px;
+    letter-spacing: 1px;
+  }
+  .hero p { font-size: 1.15rem; opacity: .9; margin-bottom: 28px; }
+  .hero-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem; font-weight: 700;
+    color: var(--green); margin-bottom: 24px;
+  }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 18px;
+    margin-bottom: 40px;
+  }
+  .stat-card {
+    background: #fff; border-radius: 12px;
+    box-shadow: var(--shadow);
+    padding: 24px 18px; text-align: center;
+  }
+  .stat-card .num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem; font-weight: 900;
+    color: var(--green);
+  }
+  .stat-card .lbl { color: var(--mid); font-size: .88rem; margin-top: 4px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hero">
+  <h1>🛒 Fresh Deals, Every Day</h1>
+  <p>Groceries, snacks & essentials delivered to your door.</p>
+  <div class="hero-btns">
+    <a href="{{ url_for('products') }}" class="btn btn-orange" style="font-size:1rem;padding:12px 28px;">Shop Now</a>
+    {% if not session.get('user_id') %}
+    <a href="{{ url_for('register') }}" class="btn" style="background:#fff;color:var(--green);font-size:1rem;padding:12px 28px;">Sign Up Free</a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="num">{{ products|length }}+</div>
+      <div class="lbl">Products Listed</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">6</div>
+      <div class="lbl">Categories</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">🚚</div>
+      <div class="lbl">Fast Delivery</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">100%</div>
+      <div class="lbl">Fresh Guaranteed</div>
+    </div>
+  </div>
+
+  <!-- Featured Products -->
+  <h2 class="section-title">Featured Products</h2>
+  <div class="product-grid">
+    {% for p in products %}
+    <div class="product-card">
+      <a href="{{ url_for('product_detail', pid=p.id) }}">
+        <img src="{{ p.image_url or 'https://via.placeholder.com/400x300?text=' + p.name }}" alt="{{ p.name }}"/>
+      </a>
+      <div class="product-card-body">
+        <div class="category">{{ p.category_name }}</div>
+        <h3><a href="{{ url_for('product_detail', pid=p.id) }}">{{ p.name }}</a></h3>
+        <div class="price">₹ {{ "%.2f"|format(p.price) }}</div>
+        {% if p.stock < 5 %}<div class="stock-low">Only {{ p.stock }} left!</div>{% endif %}
+        {% if session.get('user_id') %}
+        <form method="POST" action="{{ url_for('add_to_cart', pid=p.id) }}">
+          <input type="hidden" name="quantity" value="1"/>
+          <button type="submit" class="btn btn-green btn-sm" style="width:100%;margin-top:8px;">+ Cart</button>
+        </form>
+        {% else %}
+        <a href="{{ url_for('login') }}" class="btn btn-outline btn-sm" style="width:100%;margin-top:8px;text-align:center;">Login to Buy</a>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

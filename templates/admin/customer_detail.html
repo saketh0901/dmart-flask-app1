@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}{{ customer.username }} – Order History{% endblock %}
+{% block extra_css %}
+<style>
+  .admin-wrap{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 112px);}
+  .sidebar{background:#111;padding:24px 0;}
+  .sidebar h3{color:rgba(255,255,255,.4);font-size:.72rem;letter-spacing:2px;text-transform:uppercase;padding:0 20px 10px;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:10px;}
+  .sidebar a{display:block;padding:11px 20px;color:rgba(255,255,255,.75);font-size:.92rem;font-weight:500;border-left:3px solid transparent;transition:all .2s;}
+  .sidebar a:hover{background:rgba(255,255,255,.07);color:#fff;border-left-color:var(--orange2);}
+  .admin-main{padding:30px;background:var(--cream);}
+  .order-block { background:#fff; border-radius:12px; box-shadow:var(--shadow); margin-bottom:22px; overflow:hidden; }
+  .order-header { background:var(--green); color:#fff; padding:14px 20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; }
+  .order-header h3 { font-size:1rem; font-weight:700; }
+  .order-header span { font-size:.88rem; opacity:.85; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="admin-wrap">
+  <div class="sidebar">
+    <h3>Admin Panel</h3>
+    <a href="{{ url_for('admin_dashboard') }}">📊 Dashboard</a>
+    <a href="{{ url_for('admin_products') }}">📦 Products</a>
+    <a href="{{ url_for('admin_orders') }}">🧾 Orders</a>
+    <a href="{{ url_for('admin_customers') }}">👥 Customers</a>
+    <a href="{{ url_for('index') }}">🏠 View Store</a>
+  </div>
+  <div class="admin-main">
+    <a href="{{ url_for('admin_customers') }}" style="color:var(--green);font-weight:600;">← Customers</a>
+    <div style="margin:20px 0 28px;">
+      <h1 style="font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--green);">{{ customer.username }}</h1>
+      <p style="color:var(--mid);font-size:.92rem;">{{ customer.email }}</p>
+    </div>
+
+    <!-- Grand totals summary -->
+    {% set grand_total = orders | sum(attribute='total_price') %}
+    <div class="card" style="margin-bottom:28px;display:flex;gap:40px;flex-wrap:wrap;">
+      <div><div style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;color:var(--green);">{{ orders|length }}</div><div style="color:var(--mid);font-size:.85rem;">Total Orders</div></div>
+      <div><div style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;color:var(--green);">₹ {{ "%.2f"|format(grand_total) }}</div><div style="color:var(--mid);font-size:.85rem;">Lifetime Spend</div></div>
+    </div>
+
+    {% if orders %}
+      {% for o in orders %}
+      <div class="order-block">
+        <div class="order-header">
+          <h3>Order #{{ o.order_id }} &nbsp;·&nbsp; {{ o.created_at.strftime('%d %b %Y, %I:%M %p') }}</h3>
+          <div style="display:flex;gap:14px;align-items:center;">
+            <span class="badge badge-{{ o.status }}">{{ o.status|title }}</span>
+            <span style="font-weight:800;font-size:1rem;">₹ {{ "%.2f"|format(o.total_price) }}</span>
+          </div>
+        </div>
+        <table>
+          <thead style="background:var(--light);">
+            <tr><th>Product</th><th>Unit Price</th><th>Qty</th><th>Line Total</th></tr>
+          </thead>
+          <tbody>
+            {% for item in o.items %}
+            <tr>
+              <td style="font-weight:600;">{{ item.name }}</td>
+              <td>₹ {{ "%.2f"|format(item.unit_price) }}</td>
+              <td>{{ item.quantity }}</td>
+              <td style="font-weight:700;color:var(--green);">₹ {{ "%.2f"|format(item.line_total) }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+          <tfoot>
+            <tr style="background:var(--cream);">
+              <td colspan="3" style="text-align:right;font-weight:800;padding-right:16px;">Order Total</td>
+              <td style="font-weight:900;font-size:1.1rem;color:var(--green);">₹ {{ "%.2f"|format(o.total_price) }}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      {% endfor %}
+    {% else %}
+    <div class="card" style="text-align:center;padding:50px;">
+      <p style="font-size:1.1rem;color:var(--mid);">This customer has no orders yet.</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

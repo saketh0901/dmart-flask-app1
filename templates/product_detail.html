@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}{{ product.name }} – DMart{% endblock %}
+{% block content %}
+<div class="container">
+  <a href="{{ url_for('products') }}" style="color:var(--green);font-weight:600;">← Back to Products</a>
+  <div class="card" style="margin-top:22px;display:flex;gap:36px;flex-wrap:wrap;">
+    <img src="{{ product.image_url }}" alt="{{ product.name }}"
+         style="width:340px;height:300px;object-fit:cover;border-radius:10px;flex-shrink:0;"/>
+    <div style="flex:1;min-width:240px;">
+      <p style="color:var(--mid);font-size:.9rem;margin-bottom:6px;">{{ product.category_name }}</p>
+      <h1 style="font-family:'Playfair Display',serif;font-size:2rem;margin-bottom:12px;">{{ product.name }}</h1>
+      <p style="color:var(--mid);line-height:1.6;margin-bottom:20px;">{{ product.description }}</p>
+      <div style="font-size:2rem;font-weight:800;color:var(--green);margin-bottom:16px;">₹ {{ "%.2f"|format(product.price) }}</div>
+      <p style="margin-bottom:20px;font-size:.92rem;">
+        Stock:
+        {% if product.stock == 0 %}<span style="color:var(--red);font-weight:700;">Out of stock</span>
+        {% elif product.stock < 5 %}<span style="color:var(--orange);font-weight:700;">{{ product.stock }} left!</span>
+        {% else %}<span style="color:var(--green);font-weight:700;">In Stock</span>{% endif %}
+      </p>
+      {% if session.get('user_id') and product.stock > 0 %}
+      <form method="POST" action="{{ url_for('add_to_cart', pid=product.id) }}" style="display:flex;gap:12px;align-items:center;">
+        <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" class="form-control" style="width:80px;"/>
+        <button type="submit" class="btn btn-green">🛒 Add to Cart</button>
+      </form>
+      {% elif not session.get('user_id') %}
+      <a href="{{ url_for('login') }}" class="btn btn-orange">Login to Buy</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

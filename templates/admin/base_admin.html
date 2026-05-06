@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block extra_css %}
+<style>
+  .admin-layout { display: grid; grid-template-columns: 220px 1fr; gap: 0; min-height: calc(100vh - 110px); }
+  .admin-sidebar {
+    background: var(--dark);
+    padding: 24px 0;
+    min-height: 100%;
+  }
+  .admin-sidebar h3 {
+    color: rgba(255,255,255,.5);
+    font-size: .75rem; letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 0 20px 12px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    margin-bottom: 12px;
+  }
+  .admin-sidebar a {
+    display: block; padding: 11px 20px;
+    color: rgba(255,255,255,.8); font-weight: 500;
+    font-size: .92rem; transition: all .2s;
+    border-left: 3px solid transparent;
+  }
+  .admin-sidebar a:hover, .admin-sidebar a.active {
+    background: rgba(255,255,255,.07);
+    color: #fff;
+    border-left-color: var(--orange2);
+  }
+  .admin-main { padding: 30px; background: var(--cream); }
+  .stat-cards { display: grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap: 18px; margin-bottom: 32px; }
+  .stat-c { background:#fff; border-radius:12px; padding:22px 18px; box-shadow:var(--shadow); }
+  .stat-c .v { font-family:'Playfair Display',serif; font-size:2rem; font-weight:900; color:var(--green); }
+  .stat-c .l { color:var(--mid); font-size:.85rem; margin-top:4px; }
+</style>
+{% endblock %}

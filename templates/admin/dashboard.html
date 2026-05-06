@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard – DMart{% endblock %}
+{% block extra_css %}
+<style>
+  .admin-wrap { display:grid; grid-template-columns:220px 1fr; min-height:calc(100vh - 112px); }
+  .sidebar { background:#111; padding:24px 0; }
+  .sidebar h3 { color:rgba(255,255,255,.4); font-size:.72rem; letter-spacing:2px; text-transform:uppercase; padding:0 20px 10px; border-bottom:1px solid rgba(255,255,255,.07); margin-bottom:10px; }
+  .sidebar a { display:block; padding:11px 20px; color:rgba(255,255,255,.75); font-size:.92rem; font-weight:500; border-left:3px solid transparent; transition:all .2s; }
+  .sidebar a:hover { background:rgba(255,255,255,.07); color:#fff; border-left-color:var(--orange2); }
+  .admin-main { padding:30px; background:var(--cream); }
+  .stat-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(175px,1fr)); gap:18px; margin-bottom:30px; }
+  .stat-c { background:#fff; border-radius:12px; padding:22px 18px; box-shadow:var(--shadow); }
+  .stat-c .v { font-family:'Playfair Display',serif; font-size:2rem; font-weight:900; color:var(--green); }
+  .stat-c .l { color:var(--mid); font-size:.85rem; margin-top:4px; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="admin-wrap">
+  <div class="sidebar">
+    <h3>Admin Panel</h3>
+    <a href="{{ url_for('admin_dashboard') }}">📊 Dashboard</a>
+    <a href="{{ url_for('admin_products') }}">📦 Products</a>
+    <a href="{{ url_for('admin_orders') }}">🧾 Orders</a>
+    <a href="{{ url_for('admin_customers') }}">👥 Customers</a>
+    <a href="{{ url_for('index') }}">🏠 View Store</a>
+  </div>
+  <div class="admin-main">
+    <h1 style="font-family:'Playfair Display',serif;font-size:1.9rem;color:var(--green);margin-bottom:24px;">Dashboard</h1>
+
+    <div class="stat-row">
+      <div class="stat-c"><div class="v">{{ user_count }}</div><div class="l">Total Customers</div></div>
+      <div class="stat-c"><div class="v">{{ order_count }}</div><div class="l">Total Orders</div></div>
+      <div class="stat-c"><div class="v">₹{{ "%.0f"|format(revenue) }}</div><div class="l">Revenue</div></div>
+      <div class="stat-c"><div class="v">{{ product_count }}</div><div class="l">Products</div></div>
+    </div>
+
+    <div class="card">
+      <h2 style="font-size:1.2rem;font-weight:700;color:var(--green);margin-bottom:18px;">Recent Orders</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>ID</th><th>Customer</th><th>Total</th><th>Status</th><th>Date</th></tr></thead>
+          <tbody>
+            {% for o in recent_orders %}
+            <tr>
+              <td>#{{ o.id }}</td>
+              <td>{{ o.username }}</td>
+              <td style="font-weight:700;color:var(--green);">₹ {{ "%.2f"|format(o.total_price) }}</td>
+              <td><span class="badge badge-{{ o.status }}">{{ o.status|title }}</span></td>
+              <td style="color:var(--mid);font-size:.88rem;">{{ o.created_at.strftime('%d %b %Y') }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

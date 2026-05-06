@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Manage Orders – DMart Admin{% endblock %}
+{% block extra_css %}
+<style>
+  .admin-wrap{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 112px);}
+  .sidebar{background:#111;padding:24px 0;}
+  .sidebar h3{color:rgba(255,255,255,.4);font-size:.72rem;letter-spacing:2px;text-transform:uppercase;padding:0 20px 10px;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:10px;}
+  .sidebar a{display:block;padding:11px 20px;color:rgba(255,255,255,.75);font-size:.92rem;font-weight:500;border-left:3px solid transparent;transition:all .2s;}
+  .sidebar a:hover{background:rgba(255,255,255,.07);color:#fff;border-left-color:var(--orange2);}
+  .admin-main{padding:30px;background:var(--cream);}
+</style>
+{% endblock %}
+{% block content %}
+<div class="admin-wrap">
+  <div class="sidebar">
+    <h3>Admin Panel</h3>
+    <a href="{{ url_for('admin_dashboard') }}">📊 Dashboard</a>
+    <a href="{{ url_for('admin_products') }}">📦 Products</a>
+    <a href="{{ url_for('admin_orders') }}">🧾 Orders</a>
+    <a href="{{ url_for('admin_customers') }}">👥 Customers</a>
+    <a href="{{ url_for('index') }}">🏠 View Store</a>
+  </div>
+  <div class="admin-main">
+    <h1 style="font-family:'Playfair Display',serif;font-size:1.9rem;color:var(--green);margin-bottom:24px;">All Orders</h1>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>ID</th><th>Customer</th><th>Email</th><th>Total</th><th>Status</th><th>Date</th><th>Update</th></tr></thead>
+        <tbody>
+          {% for o in orders %}
+          <tr>
+            <td>#{{ o.id }}</td>
+            <td style="font-weight:600;">{{ o.username }}</td>
+            <td style="color:var(--mid);font-size:.88rem;">{{ o.email }}</td>
+            <td style="font-weight:700;color:var(--green);">₹ {{ "%.2f"|format(o.total_price) }}</td>
+            <td><span class="badge badge-{{ o.status }}">{{ o.status|title }}</span></td>
+            <td style="color:var(--mid);font-size:.88rem;">{{ o.created_at.strftime('%d %b %Y') }}</td>
+            <td>
+              <form method="POST" action="{{ url_for('admin_update_order', oid=o.id) }}" style="display:flex;gap:6px;">
+                <select name="status" class="form-control" style="width:130px;padding:6px 8px;font-size:.85rem;">
+                  {% for s in ['pending','confirmed','delivered','cancelled'] %}
+                  <option value="{{ s }}" {% if o.status==s %}selected{% endif %}>{{ s|title }}</option>
+                  {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-green btn-sm">Save</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

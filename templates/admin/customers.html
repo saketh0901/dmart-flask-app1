@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Customers – DMart Admin{% endblock %}
+{% block extra_css %}
+<style>
+  .admin-wrap{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 112px);}
+  .sidebar{background:#111;padding:24px 0;}
+  .sidebar h3{color:rgba(255,255,255,.4);font-size:.72rem;letter-spacing:2px;text-transform:uppercase;padding:0 20px 10px;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:10px;}
+  .sidebar a{display:block;padding:11px 20px;color:rgba(255,255,255,.75);font-size:.92rem;font-weight:500;border-left:3px solid transparent;transition:all .2s;}
+  .sidebar a:hover{background:rgba(255,255,255,.07);color:#fff;border-left-color:var(--orange2);}
+  .admin-main{padding:30px;background:var(--cream);}
+</style>
+{% endblock %}
+{% block content %}
+<div class="admin-wrap">
+  <div class="sidebar">
+    <h3>Admin Panel</h3>
+    <a href="{{ url_for('admin_dashboard') }}">📊 Dashboard</a>
+    <a href="{{ url_for('admin_products') }}">📦 Products</a>
+    <a href="{{ url_for('admin_orders') }}">🧾 Orders</a>
+    <a href="{{ url_for('admin_customers') }}">👥 Customers</a>
+    <a href="{{ url_for('index') }}">🏠 View Store</a>
+  </div>
+  <div class="admin-main">
+    <h1 style="font-family:'Playfair Display',serif;font-size:1.9rem;color:var(--green);margin-bottom:24px;">Customers & Spend</h1>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Orders</th><th>Total Spent</th><th>Details</th></tr></thead>
+        <tbody>
+          {% for c in customers %}
+          <tr>
+            <td style="color:var(--mid);">{{ c.id }}</td>
+            <td style="font-weight:600;">{{ c.username }}</td>
+            <td style="color:var(--mid);font-size:.88rem;">{{ c.email }}</td>
+            <td>{{ c.total_orders }}</td>
+            <td style="font-weight:800;color:var(--green);">₹ {{ "%.2f"|format(c.total_spent) }}</td>
+            <td>
+              <a href="{{ url_for('admin_customer_detail', uid=c.id) }}" class="btn btn-outline btn-sm">Full Price List</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
