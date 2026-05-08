@@ -28,7 +28,8 @@ app.secret_key = os.environ.get("SECRET_KEY", "dmart-super-secret-2024")
 app.config["MYSQL_HOST"]     = os.environ.get("MYSQL_HOST", "localhost")
 app.config["MYSQL_USER"]     = os.environ.get("MYSQL_USER", "root")
 app.config["MYSQL_PASSWORD"] = os.environ.get("MYSQL_PASSWORD", "dmart123")
-app.config["MYSQL_DB"]       = os.environ.get("MYSQL_DB", "dmart_db")
+app.config["MYSQL_DB"]       = os.environ.get("MYSQL_DB", "railway")
+app.config["MYSQL_PORT"]     = int(os.environ.get("MYSQL_PORT", 3306))
 app.config["MYSQL_CURSORCLASS"] = "DictCursor"
 
 mysql = MySQL(app)
