@@ -29,7 +29,8 @@ app.config["MYSQL_HOST"]     = os.environ.get("MYSQL_HOST", "localhost")
 app.config["MYSQL_USER"]     = os.environ.get("MYSQL_USER", "root")
 app.config["MYSQL_PASSWORD"] = os.environ.get("MYSQL_PASSWORD", "dmart123")
 app.config["MYSQL_DB"]       = os.environ.get("MYSQL_DB", "railway")
-app.config["MYSQL_PORT"]     = int(os.environ.get("MYSQL_PORT", 3306))
+port = os.environ.get("MYSQL_PORT", "3306")
+app.config["MYSQL_PORT"] = int(port) if port else 3306
 app.config["MYSQL_CURSORCLASS"] = "DictCursor"
 
 mysql = MySQL(app)
